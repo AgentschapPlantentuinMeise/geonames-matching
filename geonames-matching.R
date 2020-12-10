@@ -107,12 +107,13 @@ locs.split$check2 = paste0(locs.split$text,
 
 #deduplicate the substrings per country, 
 #to remove redundancy from the matching process
-locs.split %<>% filter(!duplicated(check))
+locs.split2 = locs.split %>% 
+  filter(!duplicated(check))
 
 ##
 ###list all country codes of the locality list
 ##
-countries = count(locs.split,
+countries = count(locs.split2,
                   COUNTRY_CODE)
 countries %<>% arrange(desc(n))
 
@@ -122,15 +123,15 @@ countries %<>% arrange(desc(n))
 
 #slow!
 #per country, match a-z substrings of locality to geonames labels
-locs.split$geoid = NA
-locs.split$lat = NA
-locs.split$long = NA
-locs.split$geoname = NA
-locs.split$geoaltname = NA
-locs.split$cn = NA
-out = locs.split[1,]
+locs.split2$geoid = NA
+locs.split2$lat = NA
+locs.split2$long = NA
+locs.split2$geoname = NA
+locs.split2$geoaltname = NA
+locs.split2$cn = NA
+out = locs.split2[1,]
 for (i in 1:dim(countries)[1]) {
-  apm = filter(locs.split,
+  apm = filter(locs.split2,
                COUNTRY_CODE==countries$COUNTRY_CODE[i])
   geo = filter(data,
                `country code`==countries$COUNTRY_CODE[i])
@@ -249,9 +250,9 @@ exp3 = left_join(exp3,
                         lat,
                         long),
                  by=c("LOCALITY"="locid"))
-write_tsv(exp3,
-          "enriched specimen data.txt",
-          na="")
+#write_tsv(exp3,
+#          "enriched specimen data.txt",
+#          na="")
 
 ##
 ###overlap with BGBM geonames ids
