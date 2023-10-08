@@ -1,0 +1,3 @@
+occurrenceID
+gbifID
+countryCode

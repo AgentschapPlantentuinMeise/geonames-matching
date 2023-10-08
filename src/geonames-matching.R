@@ -1,36 +1,22 @@
 library(tidyverse)
 library(magrittr)
 
-setwd("D:/apm/geonames")
 
 ##
 ###geonames raw data
 ##
-data = read_tsv("allCountries.txt",
+data = read_tsv("data/geonames/allCountries.txt",
                 col_names = F,
                 col_types = cols(.default = "c"),
                 quote = "")
 
 #set colnames
-colnames(data) = c("geonameid",
-                   "name",
-                   "asciiname",
-                   "alternatenames",
-                   "latitude",
-                   "longitude",
-                   "feature class",
-                   "feature code",
-                   "country code",
-                   "cc2",
-                   "admin1 code",
-                   "admin2 code",
-                   "admin3 code",
-                   "admin4 code",
-                   "population",
-                   "elevation",
-                   "dem",
-                   "timezone",
-                   "modification date")
+colnames = read_delim("data/geonames/colnames.txt",
+                      col_names = F,
+                      delim=" : ") %>%
+  mutate(cols = trimws(X1))
+
+colnames(data) = colnames$cols
 
 # geonames ids for BGBM specimens
 # bgbm = read_csv("Botanical-Data-Export-Mathias.csv",
