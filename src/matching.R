@@ -195,7 +195,8 @@ match_wrapper <- function(names,
                           "",
                           tolower(alternatenames))) %>%
       separate_rows(text2,
-                    sep=",")
+                    sep=",") %>%
+      filter(nchar(text2) > 2)
     print(paste(countries$countryCode[i],
                 countries$n[i],
                 sep=": "))

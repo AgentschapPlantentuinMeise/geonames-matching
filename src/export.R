@@ -40,10 +40,11 @@ export_to_dwc_geo <- function(match_results,
                               foldername,
                               export_type) {
   match_results %<>%
+    select(-countryCode) %>%
     left_join(data,
               by = c("locid" = property),
               relationship = "many-to-many") %>%
-    mutate(locationID = paste0("htts://www.geonames.org/",
+    mutate(locationID = paste0("https://www.geonames.org/",
                                geonameid),
            locationRemarks = paste0("Score: ",
                                        score,
@@ -119,6 +120,10 @@ generate_filename <- function(foldername,
   
   dir = type %>%
     paste0("data/output/",.)
+  
+  if (!dir.exists("data/output")) {
+    dir.create("data/output")
+  }
   
   foldername %<>%
     gsub("/occurrence.txt","",.,fixed = T) %>%

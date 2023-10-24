@@ -60,7 +60,8 @@ parse_strings <- function(data,
     mutate(chunk = gsub("[^a-z]",
                         "",
                         tolower(!!sym(property)))) %>%
-    filter(chunk!="") %>%
+    filter(chunk!="",
+           nchar(chunk) > 2) %>%
     mutate(checkid1 = paste0(chunk,countryCode),
            checkid2 = paste0(chunk,locid)) %>%
     rownames_to_column("rownr")
