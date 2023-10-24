@@ -4,6 +4,8 @@
 match_string <- function(locstring,
                          geo_sub) {
   require(tidyverse)
+  
+  ##print(locstring)
   matches = filter(geo_sub,
                    text == locstring$chunk|
                      text2 == locstring$chunk)
@@ -172,7 +174,8 @@ matches_process <- function(data,
 match_wrapper <- function(names,
                           geonames,
                           cores,
-                          rmode) {
+                          rmode,
+                          minthread = 1500) {
   names_u = names %>%
     filter(!duplicated(checkid1))
   
@@ -180,6 +183,7 @@ match_wrapper <- function(names,
     count(countryCode)
   
   resu = list()
+  times = ""
   for (i in 1:dim(countries)[1]) {
     names_sub = names_u %>%
       filter(countryCode == countries$countryCode[i])
@@ -197,14 +201,26 @@ match_wrapper <- function(names,
       separate_rows(text2,
                     sep=",") %>%
       filter(nchar(text2) > 2)
-    print(paste(countries$countryCode[i],
-                countries$n[i],
-                sep=": "))
+    loginfo = paste(countries$countryCode[i],
+                    countries$n[i],
+                    sep=": ")
+    print(loginfo)
+    times = paste(times,
+                  loginfo,
+                  Sys.time(),
+                  sep="\r\n")
+    if (dim(names_sub)[1] > minthread) {
     matching_results = threading(data = names_sub,
                                  f = match_string,
                                  num_threads = cores,
                                  arg = list(geo_sub = geo_sub),
                                  envir = "local")
+    } else {
+      matching_results = names_sub %>%
+        split(seq_len(nrow(.))) %>%
+        lapply(function(x) match_string(x,
+                                        geo_sub))
+    }
     
     names(matching_results) = pull(names_sub,
                                    checkid1)
@@ -217,6 +233,6 @@ match_wrapper <- function(names,
                                 arg = list(rmode = rmode),
                                 envir = "local")
   names(validated_results) = names(resu)
-
+  write(times,"match_info.txt")
   return(validated_results)
 }

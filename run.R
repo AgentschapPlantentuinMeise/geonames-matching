@@ -32,7 +32,8 @@ cores = assess_cores(config$matching$cores)
 matching_results = match_wrapper(parsed_names,
                                  geonames,
                                  cores,
-                                 config$matching$rmode)
+                                 config$matching$rmode,
+                                 1500)
 
 ## Filter the matches by a set of rules
 ## Also convert to a tibble for easier exporting of results
