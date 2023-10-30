@@ -1,0 +1,5 @@
+SELECT ?country ?countryLabel ?countryAltLabel WHERE {
+  ?country wdt:P31 wd:Q6256.  # instances of Q6256 (country)
+  OPTIONAL { ?country skos:altLabel ?countryAltLabel FILTER(LANG(?countryAltLabel) = "fr") }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "fr". }
+}

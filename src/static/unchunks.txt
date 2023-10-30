@@ -1,0 +1,14 @@
+province
+district
+plot
+isl
+tree
+eiland
+archipel
+hok
+gemeente
+loc
+leg
+territoire
+rgion
+region

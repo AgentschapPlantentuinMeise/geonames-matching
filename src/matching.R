@@ -175,12 +175,15 @@ match_wrapper <- function(names,
                           geonames,
                           cores,
                           rmode,
-                          minthread = 1500) {
+                          minthread = 1500,
+                          foldername) {
   names_u = names %>%
     filter(!duplicated(checkid1))
   
   countries = names_u %>%
-    count(countryCode)
+    count(countryCode) %>%
+    arrange(desc(n)) %>%
+    filter(countryCode!="ZZ")
   
   resu = list()
   times = ""
@@ -233,6 +236,11 @@ match_wrapper <- function(names,
                                 arg = list(rmode = rmode),
                                 envir = "local")
   names(validated_results) = names(resu)
-  write(times,"match_info.txt")
+  source("src/export.R")
+  generate_filename(foldername,
+                    "",
+                    ".txt") %>%
+    write(times,.)
+  
   return(validated_results)
 }

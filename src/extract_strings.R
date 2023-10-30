@@ -48,6 +48,33 @@ parse_strings <- function(data,
   unknowns = readLines("src/static/unknowns.txt",
                        warn = F)
   
+  countrynames_filenames = list.files("data/countrynames",
+                            pattern = ".tsv",
+                            full.names = T)
+  
+  countrynames_list = list()
+  for (i in countrynames_filenames) {
+    countrynames_list[[i]] = read_tsv(i,
+                                      col_types = cols(.default = "c"))
+  }
+  
+  countrynames = countrynames_list %>%
+    bind_rows() %>%
+    filter(nchar(countryLabel) > 2,
+           nchar(countryAltLabel) > 2) %>%
+    mutate(countryLabel = gsub("[^a-z]",
+                               "",
+                               tolower(countryLabel)),
+           countryAltLabel = gsub("[^a-z]",
+                               "",
+                               tolower(countryAltLabel))) %>%
+    select(-country) %>%
+    unlist(use.names = F) %>%
+    unique()
+  
+  chunk_unknowns = readLines("src/static/unchunks.txt",
+                             warn = F)
+  
   parsed_names = data %>%
     count(!!sym(property),
           countryCode) %>%
@@ -61,7 +88,9 @@ parse_strings <- function(data,
                         "",
                         tolower(!!sym(property)))) %>%
     filter(chunk!="",
-           nchar(chunk) > 2) %>%
+           nchar(chunk) > 2,
+           !chunk%in%countrynames,
+           !chunk%in%chunk_unknowns) %>%
     mutate(checkid1 = paste0(chunk,countryCode),
            checkid2 = paste0(chunk,locid)) %>%
     rownames_to_column("rownr")
