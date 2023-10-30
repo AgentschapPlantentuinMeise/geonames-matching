@@ -177,6 +177,9 @@ match_wrapper <- function(names,
                           rmode,
                           minthread = 1500,
                           foldername) {
+  minthread %<>%
+    as.numeric()
+  
   names_u = names %>%
     filter(!duplicated(checkid1))
   
